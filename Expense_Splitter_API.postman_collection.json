@@ -1,0 +1,795 @@
+{
+    "info": {
+        "name": "Expense Splitter API",
+        "description": "Complete API collection for Expense Splitter Backend - supports custom splits, recurring transactions, and analytics. Replace {{base_url}} with your deployed URL.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:5000",
+            "description": "Replace with your deployed backend URL"
+        }
+    ],
+    "item": [
+        {
+            "name": "📁 Expense Management",
+            "item": [
+                {
+                    "name": "List All Expenses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/expenses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        },
+                        "description": "Retrieve all expenses with their splits. Supports filtering by category, paid_by, start_date, and end_date."
+                    }
+                },
+                {
+                    "name": "Add Simple Equal Split Expense",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 600.00,\n  \"description\": \"Coffee for team\",\n  \"paid_by\": \"Shantanu\",\n  \"category\": \"Food\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/expenses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        },
+                        "description": "Add expense with automatic equal split among all existing people. If no splits provided, creates equal split automatically."
+                    }
+                },
+                {
+                    "name": "Add Custom Split Expense",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 1000.00,\n  \"description\": \"Team dinner with custom splits\",\n  \"paid_by\": \"Shantanu\",\n  \"category\": \"Food\",\n  \"splits\": [\n    {\n      \"person_name\": \"Shantanu\",\n      \"split_type\": \"percentage\",\n      \"split_value\": 40\n    },\n    {\n      \"person_name\": \"Sanket\",\n      \"split_type\": \"exact\",\n      \"split_value\": 300\n    },\n    {\n      \"person_name\": \"Om\",\n      \"split_type\": \"equal\"\n    },\n    {\n      \"person_name\": \"Priya\",\n      \"split_type\": \"equal\"\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/expenses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        },
+                        "description": "Add expense with custom splits: Shantanu 40% (₹400), Sanket exact ₹300, Om & Priya split remaining ₹300 equally (₹150 each)."
+                    }
+                },
+                {
+                    "name": "Add Mixed Split Type Expense",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 500.00,\n  \"description\": \"Utility Bill Split\",\n  \"paid_by\": \"Om\",\n  \"category\": \"Utilities\",\n  \"splits\": [\n    {\n      \"person_name\": \"Shantanu\",\n      \"split_type\": \"percentage\",\n      \"split_value\": 50\n    },\n    {\n      \"person_name\": \"Sanket\",\n      \"split_type\": \"percentage\",\n      \"split_value\": 30\n    },\n    {\n      \"person_name\": \"Om\",\n      \"split_type\": \"percentage\",\n      \"split_value\": 20\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/expenses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        },
+                        "description": "Utility bill split by percentage: Shantanu 50%, Sanket 30%, Om 20%."
+                    }
+                },
+                {
+                    "name": "Update Expense",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 350.00,\n  \"description\": \"Updated: Petrol (increased price)\",\n  \"paid_by\": \"Om\",\n  \"category\": \"Travel\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/expenses/3",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses",
+                                "3"
+                            ]
+                        },
+                        "description": "Update existing expense. Replace '3' with actual expense ID. Can also update splits."
+                    }
+                },
+                {
+                    "name": "Delete Expense",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/expenses/5",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses",
+                                "5"
+                            ]
+                        },
+                        "description": "Delete an expense. Replace '5' with actual expense ID. Cascades to delete all related splits."
+                    }
+                },
+                {
+                    "name": "Filter Expenses by Category",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/expenses?category=Food",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "category",
+                                    "value": "Food"
+                                }
+                            ]
+                        },
+                        "description": "Filter expenses by category. Available categories: Food, Travel, Utilities, Entertainment, Other."
+                    }
+                },
+                {
+                    "name": "Filter Expenses by Date Range",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/expenses?start_date=2024-01-01&end_date=2024-12-31",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "start_date",
+                                    "value": "2024-01-01"
+                                },
+                                {
+                                    "key": "end_date",
+                                    "value": "2024-12-31"
+                                }
+                            ]
+                        },
+                        "description": "Filter expenses by date range. Use ISO date format (YYYY-MM-DD)."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🔄 Recurring Transactions",
+            "item": [
+                {
+                    "name": "List Recurring Transactions",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/recurring",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "recurring"
+                            ]
+                        },
+                        "description": "Get all recurring transaction templates with their generation status."
+                    }
+                },
+                {
+                    "name": "Create Monthly Recurring Transaction",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 15000.00,\n  \"description\": \"Monthly Rent\",\n  \"paid_by\": \"Shantanu\",\n  \"category\": \"Utilities\",\n  \"recurrence_type\": \"monthly\",\n  \"start_date\": \"2024-01-01T00:00:00\",\n  \"end_date\": \"2025-12-31T23:59:59\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/recurring",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "recurring"
+                            ]
+                        },
+                        "description": "Create monthly recurring transaction. Generates expenses automatically on the 1st of each month."
+                    }
+                },
+                {
+                    "name": "Create Weekly Recurring Transaction",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 500.00,\n  \"description\": \"Weekly Groceries\",\n  \"paid_by\": \"Sanket\",\n  \"category\": \"Food\",\n  \"recurrence_type\": \"weekly\",\n  \"start_date\": \"2024-01-01T00:00:00\",\n  \"end_date\": \"2024-12-31T23:59:59\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/recurring",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "recurring"
+                            ]
+                        },
+                        "description": "Create weekly recurring transaction. Generates expenses every 7 days starting from start_date."
+                    }
+                },
+                {
+                    "name": "Deactivate Recurring Transaction",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"is_active\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/recurring/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "recurring",
+                                "1"
+                            ]
+                        },
+                        "description": "Deactivate a recurring transaction. Replace '1' with actual recurring transaction ID."
+                    }
+                },
+                {
+                    "name": "Process Recurring Transactions",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/recurring/process",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "recurring",
+                                "process"
+                            ]
+                        },
+                        "description": "Manually trigger processing of all active recurring transactions. Generates any missed expenses."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "💰 Settlements & People",
+            "item": [
+                {
+                    "name": "Get All People",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/people",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "people"
+                            ]
+                        },
+                        "description": "List all people involved in expenses. People are automatically created when mentioned in expenses."
+                    }
+                },
+                {
+                    "name": "Get Current Balances",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/balances",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "balances"
+                            ]
+                        },
+                        "description": "Calculate current balances for each person. Shows what they paid vs what they owe based on splits."
+                    }
+                },
+                {
+                    "name": "Get Settlement Summary",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/settlements",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "settlements"
+                            ]
+                        },
+                        "description": "Get optimized settlement transactions to minimize the number of payments needed to settle all debts."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📊 Analytics & Categories",
+            "item": [
+                {
+                    "name": "Get All Categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/categories",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "categories"
+                            ]
+                        },
+                        "description": "Get list of all available expense categories."
+                    }
+                },
+                {
+                    "name": "Category Analytics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/categories",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "categories"
+                            ]
+                        },
+                        "description": "Get spending breakdown by category with amounts, percentages, and expense counts."
+                    }
+                },
+                {
+                    "name": "Category Analytics with Date Filter",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/categories?start_date=2024-01-01&end_date=2024-12-31",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "categories"
+                            ],
+                            "query": [
+                                {
+                                    "key": "start_date",
+                                    "value": "2024-01-01"
+                                },
+                                {
+                                    "key": "end_date",
+                                    "value": "2024-12-31"
+                                }
+                            ]
+                        },
+                        "description": "Get category analytics for specific date range."
+                    }
+                },
+                {
+                    "name": "Monthly Analytics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/monthly?year=2024",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "monthly"
+                            ],
+                            "query": [
+                                {
+                                    "key": "year",
+                                    "value": "2024"
+                                }
+                            ]
+                        },
+                        "description": "Get monthly spending summaries for specified year. Shows trends and totals by month."
+                    }
+                },
+                {
+                    "name": "People Analytics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/people",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "people"
+                            ]
+                        },
+                        "description": "Get individual spending patterns showing total spent, expense counts, averages, and top categories per person."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🌐 Web Interface",
+            "item": [
+                {
+                    "name": "Web Dashboard",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                ""
+                            ]
+                        },
+                        "description": "Access the web dashboard. Open this URL in a browser to use the interactive interface for adding expenses and viewing balances."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🔧 Admin & Testing",
+            "item": [
+                {
+                    "name": "Clean Database",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/admin/clean-db",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "admin",
+                                "clean-db"
+                            ]
+                        },
+                        "description": "⚠️ WARNING: Permanently deletes ALL data from database. Use for testing only."
+                    }
+                },
+                {
+                    "name": "Reset Sample Data",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/admin/reset-sample-data",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "admin",
+                                "reset-sample-data"
+                            ]
+                        },
+                        "description": "Clean database and reload fresh sample data for testing. Creates expenses with various split scenarios."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "❌ Error Handling & Validation",
+            "item": [
+                {
+                    "name": "Add Invalid Expense - Negative Amount",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": -100.00,\n  \"description\": \"Invalid negative amount\",\n  \"paid_by\": \"Shantanu\",\n  \"category\": \"Food\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/expenses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        },
+                        "description": "Test validation: Should return 400 error for negative amount."
+                    }
+                },
+                {
+                    "name": "Add Invalid Expense - Empty Description",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 100.00,\n  \"description\": \"\",\n  \"paid_by\": \"Shantanu\",\n  \"category\": \"Food\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/expenses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        },
+                        "description": "Test validation: Should return 400 error for empty description."
+                    }
+                },
+                {
+                    "name": "Add Invalid Expense - Missing Paid By",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 100.00,\n  \"description\": \"Missing paid_by field\",\n  \"category\": \"Food\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/expenses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        },
+                        "description": "Test validation: Should return 400 error for missing paid_by."
+                    }
+                },
+                {
+                    "name": "Add Invalid Splits - Exceeds 100%",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 100.00,\n  \"description\": \"Invalid splits over 100%\",\n  \"paid_by\": \"Shantanu\",\n  \"category\": \"Food\",\n  \"splits\": [\n    {\n      \"person_name\": \"Shantanu\",\n      \"split_type\": \"percentage\",\n      \"split_value\": 70\n    },\n    {\n      \"person_name\": \"Sanket\",\n      \"split_type\": \"percentage\",\n      \"split_value\": 50\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/expenses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        },
+                        "description": "Test validation: Should return 400 error when percentage splits exceed 100%."
+                    }
+                },
+                {
+                    "name": "Add Invalid Splits - Exact Amount Exceeds Total",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 100.00,\n  \"description\": \"Exact amount exceeds total\",\n  \"paid_by\": \"Shantanu\",\n  \"category\": \"Food\",\n  \"splits\": [\n    {\n      \"person_name\": \"Shantanu\",\n      \"split_type\": \"exact\",\n      \"split_value\": 150\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/expenses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        },
+                        "description": "Test validation: Should return 400 error when exact amount exceeds total expense amount."
+                    }
+                },
+                {
+                    "name": "Update Non-existent Expense",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 100.00,\n  \"description\": \"Updated expense\",\n  \"paid_by\": \"Shantanu\",\n  \"category\": \"Food\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/expenses/99999",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses",
+                                "99999"
+                            ]
+                        },
+                        "description": "Test error handling: Should return 404 error for non-existent expense ID."
+                    }
+                },
+                {
+                    "name": "Delete Non-existent Expense",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/expenses/99999",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "expenses",
+                                "99999"
+                            ]
+                        },
+                        "description": "Test error handling: Should return 404 error for non-existent expense ID."
+                    }
+                },
+                {
+                    "name": "Get Balances - Empty Database",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/balances",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "balances"
+                            ]
+                        },
+                        "description": "Test edge case: Should handle empty database gracefully. Run after cleaning database to test."
+                    }
+                }
+            ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Auto-set base_url if not configured",
+                    "if (!pm.collectionVariables.get('base_url') || pm.collectionVariables.get('base_url').includes('your-app-name')) {",
+                    "    console.log('Please update the base_url collection variable with your deployed URL');",
+                    "}"
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Basic response validation",
+                    "pm.test('Response status is valid', function () {",
+                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 404, 405, 500]);",
+                    "});",
+                    "",
+                    "// Check for JSON response structure",
+                    "if (pm.response.headers.get('Content-Type') && pm.response.headers.get('Content-Type').includes('application/json')) {",
+                    "    pm.test('Response has success field', function () {",
+                    "        const jsonData = pm.response.json();",
+                    "        pm.expect(jsonData).to.have.property('success');",
+                    "    });",
+                    "    ",
+                    "    pm.test('Response has message field', function () {",
+                    "        const jsonData = pm.response.json();",
+                    "        pm.expect(jsonData).to.have.property('message');",
+                    "    });",
+                    "}"
+                ]
+            }
+        }
+    ]
+}
