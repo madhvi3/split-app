@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 # Database configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-    "DATABASE_URL", "sqlite:///expense_splitter.db"
+    "DATABASE_URL", "postgresql://postgres:GnHMImdTYLRpqHJPyruXZQgImNykmGHl@crossover.proxy.rlwy.net:46864/railway"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
